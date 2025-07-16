@@ -2,8 +2,11 @@ name: Frequent Seed Reset (Every Minute)
 
 on:
   schedule:
-    - cron: '* * * * *'  # Runs every minute
-  workflow_dispatch:  # Manual run option
+    - cron: '* * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write  # 👈 Necessary to allow git push
 
 jobs:
   reset-seed:
@@ -22,5 +25,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add seed.txt
-          git commit -m "Auto seed reset: $(date -u +'%Y-%m-%d %H:%M:%S')"
+          git commit -m "Auto seed reset: $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push
