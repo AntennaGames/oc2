@@ -1,0 +1,26 @@
+name: Frequent Seed Reset (Every Minute)
+
+on:
+  schedule:
+    - cron: '* * * * *'  # Runs every minute
+  workflow_dispatch:  # Manual run option
+
+jobs:
+  reset-seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate new 8-digit seed
+        run: |
+          NEW_SEED=$(shuf -i 10000000-99999999 -n 1)
+          echo "$NEW_SEED" > seed.txt
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add seed.txt
+          git commit -m "Auto seed reset: $(date -u +'%Y-%m-%d %H:%M:%S')"
+          git push
